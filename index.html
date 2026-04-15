@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Random Đỏ Đen</title>
+    <style>
+        body {
+            background: black;
+            color: #00ff00;
+            text-align: center;
+            font-family: Arial;
+        }
+
+        h1 { text-shadow: 0 0 10px #00ff00; }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(5, 60px);
+            gap: 10px;
+            justify-content: center;
+            margin-top: 30px;
+        }
+
+        .box {
+            width: 60px;
+            height: 60px;
+            border: 2px solid #00ff00;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .dot {
+            width: 25px;
+            height: 25px;
+            border-radius: 50%;
+        }
+
+        .red { background: red; }
+        .black { background: #222; }
+
+        button {
+            margin: 5px;
+            padding: 10px;
+        }
+    </style>
+</head>
+<body>
+
+<h1>Random Đỏ Đen</h1>
+
+<h3>Session: <span id="session">0</span></h3>
+<h3>Time: <span id="time">380</span></h3>
+<h3>Result: <span id="result">⚫</span></h3>
+
+<button onclick="forceResult('red')">RA ĐỎ</button>
+<button onclick="forceResult('black')">RA ĐEN</button>
+
+<div class="grid" id="grid"></div>
+
+<script>
+let history = [];
+let session = 0;
+let time = 380;
+let forced = null;
+
+// chọn kết quả trước
+function forceResult(color) {
+    forced = color;
+}
+
+// chạy mỗi giây
+setInterval(() => {
+    time--;
+    document.getElementById("time").innerText = time;
+
+    if (time <= 0) {
+        let result;
+
+        if (forced) {
+            result = forced;
+            forced = null;
+        } else {
+            result = Math.random() < 0.5 ? "red" : "black";
+        }
+
+        history.unshift(result);
+        if (history.length > 10) history.pop();
+
+        let grid = document.getElementById("grid");
+        grid.innerHTML = "";
+
+        history.forEach(x => {
+            let box = document.createElement("div");
+            box.className = "box";
+
+            let dot = document.createElement("div");
+            dot.className = "dot " + x;
+
+            box.appendChild(dot);
+            grid.appendChild(box);
+        });
+
+        document.getElementById("result").innerText =
+            result === "red" ? "🔴" : "⚫";
+
+        session++;
+        document.getElementById("session").innerText = session;
+
+        time = 380; // reset lại
+    }
+}, 1000);
+</script>
+
+</body>
+</html>
